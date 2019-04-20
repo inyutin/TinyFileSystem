@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     writeToFilesystem (INODE_OFFSET, (void*) &root, sizeof(struct Inode));
 
     // Map root to itself
-	struct Mapping rootDir = createMapping(".", 0);
+    struct Mapping rootDir = createMapping(".", 0);
     writeToFilesystem (DATA_OFFSET, (void*) &rootDir, sizeof(struct Mapping));
 
 	return 0;

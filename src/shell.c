@@ -1,7 +1,8 @@
 #include "define.h"
 
 #include "Filesystem/commands.h"
-#include "string.h"
+#include <string.h>
+#include <stdlib.h>
 
 static size_t max_length = MAX_COMMAND_LENGTH;
 int main() {
@@ -9,59 +10,59 @@ int main() {
 
 	int currentDirId = 0; //root
 
-    while(1) {
-        char command[10];
+  while(1) {
+      char command[10];
 
-        char* str = NULL;
-        int result = getline(&str, &max_length, stdin);
+      char* str = NULL;
+      int result = getline(&str, &max_length, stdin);
 
-        if (result == -1) {
-            printf("getline() error. Exit.\n");
-            return -1;
-        } else if (str[0] == '\n') {
-            command[0] = '\0';
-        } else {
-            str[result-1] = '\0';
-            char* token = strtok(str, " ");
-            strcpy(command, token);
-        }
+      if (result == -1) {
+          printf("getline() error. Exit.\n");
+          return -1;
+      } else if (str[0] == '\n') {
+          command[0] = '\0';
+      } else {
+          str[result-1] = '\0';
+          char* token = strtok(str, " ");
+          strcpy(command, token);
+      }
 
-        /* Command Received */
+      /* Command Received */
 
-        if (strcmp(command, "ls") == 0) {
-            ls(currentDirId);
-            printf("\n$ ");
-        } else if(strcmp(command, "cd") == 0){
-            char name[MAX_LENGTH_FILE_NAME];
-            char* token = strtok(NULL, " ");
+      if (strcmp(command, "ls") == 0) {
+          ls(currentDirId);
+          printf("\n$ ");
+      } else if(strcmp(command, "cd") == 0){
+          char name[MAX_LENGTH_FILE_NAME];
+          char* token = strtok(NULL, " ");
 
-            strcpy(name, token);
-            if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
-            }
+          strcpy(name, token);
+          if (token == NULL) {
+              printf("Incorrect parameter.\n");
+              break;
+          }
 
-            currentDirId = cd_t(currentDirId, name);
-            printf("$ ");
-        } else if(strcmp(command, "mkdir") == 0){
-            char name[MAX_LENGTH_FILE_NAME];
-            char* token = strtok(NULL, " ");
+          currentDirId = cd_t(currentDirId, name);
+          printf("$ ");
+      } else if(strcmp(command, "mkdir") == 0){
+          char name[MAX_LENGTH_FILE_NAME];
+          char* token = strtok(NULL, " ");
 
-            strcpy(name, token);
-            if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
-            }
+          strcpy(name, token);
+          if (token == NULL) {
+              printf("Incorrect parameter.\n");
+              break;
+          }
 
-            mkdir_t(currentDirId, name);
-            printf("$ ");
-        } else if(strcmp(command, "exit") == 0){
-            printf("Shell exited.\n");
-            exit(0);
-            return 0;
-        } else{
-            printf("Unknown command %s.\n", command);
-            printf("$ ");
-        }
-    }
+          mkdir_t(currentDirId, name);
+          printf("$ ");
+      } else if(strcmp(command, "exit") == 0){
+          printf("Shell exited.\n");
+          exit(0);
+          return 0;
+      } else{
+          printf("Unknown command %s.\n", command);
+          printf("$ ");
+      }
+  }
 }
