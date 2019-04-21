@@ -43,7 +43,7 @@ int main() {
           }
 
           currentDirId = cd_t(currentDirId, name);
-          printf("$ ");
+          printf("\n$ ");
       } else if(strcmp(command, "mkdir") == 0){
           char name[MAX_LENGTH_FILE_NAME];
           char* token = strtok(NULL, " ");
@@ -55,7 +55,7 @@ int main() {
           }
 
           mkdir_t(currentDirId, name);
-          printf("$ ");
+          printf("\n$ ");
       } else if(strcmp(command, "touch") == 0){
           char name[MAX_LENGTH_FILE_NAME];
           char* token = strtok(NULL, " ");
@@ -68,13 +68,46 @@ int main() {
 
           touch_t(currentDirId, name);
           printf("$ ");
+      } else if(strcmp(command, "cat") == 0) {
+          char name[MAX_LENGTH_FILE_NAME];
+          char* token = strtok(NULL, " ");
+
+          strcpy(name, token);
+          if (token == NULL) {
+              printf("Incorrect parameter.\n");
+              break;
+          }
+
+          cat_t(currentDirId, name);
+          printf("\n$ ");
+      } else if(strcmp(command, "echo") == 0) {
+          char* token = strtok(NULL, " ");
+          char name[MAX_LENGTH_FILE_NAME];
+
+          strcpy(name, token);
+          if (token == NULL) {
+              printf("Incorrect parameter.\n");
+              break;
+          }
+
+          char text[MAX_LENGTH_FILE_NAME];
+          token = strtok(NULL, " ");
+          if (token==NULL)
+          {
+              printf("Incorrect parameter.\n");
+              break;
+          }
+          strcpy(text, token);
+
+          echo_t(currentDirId, name, text);
+          printf("\n$ ");;
       } else if(strcmp(command, "exit") == 0){
           printf("Shell exited.\n");
           exit(0);
           return 0;
       } else{
           printf("Unknown command %s.\n", command);
-          printf("$ ");
+          printf("\n$ ");
       }
   }
 }

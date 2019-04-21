@@ -7,7 +7,10 @@
 #include "../Types/mapping.h"
 
 #include "../SystemOperations/open.h"
+#include "../SystemOperations/read.h"
+#include "../SystemOperations/write.h"
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -133,4 +136,37 @@ void touch_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
     superblock.nextAvailableInode = nextAvailableInode + 1;
     superblock.nextAvailableBlock = nextAvailableBlock + 1;
     writeToFilesystem(SB_OFFSET, (void*)& superblock, sizeof(struct Superblock));
+}
+
+/* TODO: add description */
+void cat_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
+    int id = open_t (currentDirId, name);
+    if (id == -1) {
+        printf("File not found. Try again please.\n");
+        return;
+    }
+    struct Inode inode = getInode(id);
+    char *buf = malloc(inode.size);
+    int code = read_t(inode.id, 0, buf, inode.size);
+
+    if (code == -1) {
+        printf("File is directory or the file does not exist. Exit.\n");
+        return;
+    } else {
+        printf("%s", buf);
+        return;
+    }
+}
+
+/* TODO: add description */
+void echo_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME], char text[MAX_LENGTH_TEXT]) {
+    int num = open_t (currentDirId, name);
+    struct Inode inode = getInode(num);
+    if (num == -1) {
+        printf("File to read not found. Try again please.\n");
+        return;
+    }
+
+    write_t(num, inode.size, text, strlen(text));
+    printf("Write successful.\n");
 }
