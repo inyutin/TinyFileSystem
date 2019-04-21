@@ -14,5 +14,5 @@
 - [x] cd
 - [x] exit
 - [x] touch
-- [ ] cat
-- [ ] echo
+- [x] cat
+- [x] echo
