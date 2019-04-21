@@ -13,6 +13,6 @@
 - [x] mkdir
 - [x] cd
 - [x] exit
-- [ ] touch
+- [x] touch
 - [ ] cat
 - [ ] echo
