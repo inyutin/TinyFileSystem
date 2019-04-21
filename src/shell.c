@@ -30,7 +30,7 @@ int main() {
       /* Command Received */
 
       if (strcmp(command, "ls") == 0) {
-          ls(currentDirId);
+          ls_t(currentDirId);
           printf("\n$ ");
       } else if(strcmp(command, "cd") == 0){
           char name[MAX_LENGTH_FILE_NAME];
@@ -55,6 +55,18 @@ int main() {
           }
 
           mkdir_t(currentDirId, name);
+          printf("$ ");
+      } else if(strcmp(command, "touch") == 0){
+          char name[MAX_LENGTH_FILE_NAME];
+          char* token = strtok(NULL, " ");
+
+          strcpy(name, token);
+          if (token == NULL) {
+              printf("Incorrect parameter.\n");
+              break;
+          }
+
+          touch_t(currentDirId, name);
           printf("$ ");
       } else if(strcmp(command, "exit") == 0){
           printf("Shell exited.\n");
