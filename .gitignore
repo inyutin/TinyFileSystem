@@ -1,3 +1,4 @@
 FileSystem
 shell
 .idea/
+cmake-build-debug/
