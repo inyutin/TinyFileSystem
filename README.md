@@ -5,8 +5,8 @@
     - gcc
 
 ### Usage
-    'make run'
-    './shell'
+    `make run`
+    `./shell`
 ### Commands
 
 - [x] ls
