@@ -9,7 +9,7 @@
 /*
  * Function:  read_t
  * -------------------------------------------------------------------------
- * 	Read bytes from file by it id (inode id)
+ *  Read bytes from file by it id (inode id)
  *
  *  id: id of inode associated with those blocks where we want to read
  *  offset: the number of byte from which we start reading

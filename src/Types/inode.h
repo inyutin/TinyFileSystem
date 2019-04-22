@@ -13,11 +13,11 @@ struct Inode {					/* The structure of inode, each file has only one inode */
 /*
  * Function:  getInode
  * -------------------------------------------------------------------------
- * 	Just get Inode by it's id
+ *   Just get Inode by it's id
  *
- *  id: Inode id to return
+ *   id: Inode id to return
  *
- *  returns: Inode
+ *   returns: Inode
  */
 struct Inode getInode(int id);
 

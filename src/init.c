@@ -33,5 +33,5 @@ int main(int argc, char *argv[]) {
     struct Mapping rootDir = createMapping(".", 0);
     writeToFilesystem (DATA_OFFSET, (void*) &rootDir, sizeof(struct Mapping));
 
-	return 0;
+    return 0;
 }
