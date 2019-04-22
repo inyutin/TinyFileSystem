@@ -57,7 +57,7 @@ int read_t(int id, int offset, void* buf, int count) {
                 printf("Error: No indirect block. Return bytes read.\n");
                 return accumulateRead;
             } else {
-                lseek(fd, DATA_OFFSET + iNode.indirect * BLOCK_SIZE + (block-2)*sizeof(int), SEEK_SET);
+                lseek(fd, DATA_OFFSET + iNode.indirect * BLOCK_SIZE + (block)*sizeof(int), SEEK_SET);
                 read(fd, (void *)& dirDataBlkIndex, sizeof(int));
             }
         }

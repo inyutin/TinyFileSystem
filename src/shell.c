@@ -68,7 +68,7 @@ int main() {
             }
 
             mkdir_t(currentDirId, name);
-            printf("\n$ ");
+            printf("$ ");
         } else if(strcmp(command, "touch") == 0){
             char name[MAX_LENGTH_FILE_NAME];
             char* token = strtok(NULL, " ");
