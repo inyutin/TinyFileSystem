@@ -12,4 +12,4 @@
 #define MAX_COMMAND_LENGTH 50   /* The maximum command length */
 
 #define MAX_LENGTH_FILE_NAME 10 /* The maximum length of file name */
-#define MAX_LENGTH_TEXT 100     /* ToDo: add description */
+#define MAX_LENGTH_TEXT 100     /* The maximum amount of chars to write to file */

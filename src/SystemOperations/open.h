@@ -5,7 +5,17 @@
 #include <string.h>
 #include <stdio.h>
 
-/* TODO: add description */
+/*
+ * Function:  open_t
+ * -------------------------------------------------------------------------
+ *  Open inode by pathname from directory tied with currentId
+ *
+ *  currentId: id of current dir
+ *  pathname: the name of file
+ *
+ *  returns: The id of file
+ *           returns -1 on error (if file didn't exist)
+ */
 int open_t(int currentId, const char* pathname) {
     char* string = strdup(pathname);
 
@@ -13,8 +23,6 @@ int open_t(int currentId, const char* pathname) {
         char* token = strsep(&string, "/");
         while (token != NULL) {
             if (strcmp(token, "") != 0) {
-
-                // TODO: What if we expect file?
                 struct Inode currentDir = getInode(currentId);
                 int offset = DATA_OFFSET + currentDir.direct[0] * BLOCK_SIZE;
                 int flag = 1;

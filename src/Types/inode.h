@@ -21,5 +21,4 @@ struct Inode {					/* The structure of inode, each file has only one inode */
  */
 struct Inode getInode(int id);
 
-/* TODO: add description */
 void createInode(int id, int parentId, int block, int type);

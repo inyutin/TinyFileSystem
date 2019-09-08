@@ -3,6 +3,8 @@
 #include "Filesystem/commands.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 static size_t max_length = MAX_COMMAND_LENGTH;
 
@@ -14,23 +16,24 @@ void help() {
     printf("! touch [name] - create empty file with specified name in current directory.\n");
     printf("! cat [name] - read all from file specified.\n");
     printf("! echo [name] [text] - write [text] to the end of the file specified.\n");
-    printf("! help - show information about commands.\n");
-    printf("\n$ ");
+    printf("! help - show information about commands.");
 }
 
 int main() {
-    help();
-
     int currentDirId = 0; //root
+
+    help();
 
     while(1) {
         char command[10];
 
         char* str = NULL;
+
+        printf("\n$ ");
         int result = getline(&str, &max_length, stdin);
 
         if (result == -1) {
-            printf("getline() error. Exit.\n");
+            printf("getline() error. Exit.");
             return -1;
         } else if (str[0] == '\n') {
             command[0] = '\0';
@@ -44,83 +47,98 @@ int main() {
 
         if (strcmp(command, "ls") == 0) {
             ls_t(currentDirId);
-            printf("\n$ ");
-        } else if(strcmp(command, "cd") == 0){
+            continue;
+        }
+
+        if (strcmp(command, "cd") == 0) {
             char name[MAX_LENGTH_FILE_NAME];
             char* token = strtok(NULL, " ");
 
             strcpy(name, token);
             if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
+                printf("Specify name of the directory.");
+                continue;
             }
 
             currentDirId = cd_t(currentDirId, name);
-            printf("\n$ ");
-        } else if(strcmp(command, "mkdir") == 0){
+            continue;
+        }
+
+        if(strcmp(command, "mkdir") == 0){
             char name[MAX_LENGTH_FILE_NAME];
             char* token = strtok(NULL, " ");
 
             strcpy(name, token);
             if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
+                printf("Specify name of the directory.");
+                continue;
             }
 
             mkdir_t(currentDirId, name);
-            printf("$ ");
-        } else if(strcmp(command, "touch") == 0){
+            continue;
+        }
+
+        if (strcmp(command, "touch") == 0) {
             char name[MAX_LENGTH_FILE_NAME];
             char* token = strtok(NULL, " ");
 
             strcpy(name, token);
             if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
+                printf("Specify name of the file.");
+                continue;
             }
 
             touch_t(currentDirId, name);
-            printf("$ ");
-        } else if(strcmp(command, "cat") == 0) {
+            continue;
+        }
+
+        if(strcmp(command, "cat") == 0) {
           char name[MAX_LENGTH_FILE_NAME];
           char* token = strtok(NULL, " ");
 
           strcpy(name, token);
           if (token == NULL) {
-              printf("Incorrect parameter.\n");
-              break;
+              printf("Specify name of the file.");
+              continue;
           }
 
           cat_t(currentDirId, name);
-          printf("\n$ ");
-        } else if(strcmp(command, "echo") == 0) {
+          continue;
+        }
+
+        if(strcmp(command, "echo") == 0) {
             char* token = strtok(NULL, " ");
             char name[MAX_LENGTH_FILE_NAME];
 
             strcpy(name, token);
             if (token == NULL) {
-                printf("Incorrect parameter.\n");
-                break;
+                printf("Specify name of the file.");
+                continue;
             }
 
             char text[MAX_LENGTH_FILE_NAME];
             token = strtok(NULL, " ");
             if (token==NULL) {
-                printf("Incorrect parameter.\n");
-                break;
+                printf("Specify text.");
+                continue;
             }
             strcpy(text, token);
 
             echo_t(currentDirId, name, text);
-            printf("\n$ ");
-        } else if(strcmp(command, "help") == 0) {
+            continue;
+        }
+
+        if(strcmp(command, "help") == 0) {
             help();
-        } else if(strcmp(command, "exit") == 0) {
-            printf("Shell exited.\n");
+            continue;
+        }
+
+        if(strcmp(command, "exit") == 0) {
+            printf("Shell exited.");
             exit(0);
             return 0;
-        } else{
-            printf("Unknown command %s.\n$ ", command);
         }
+
+        printf("Unknown command %s", command);
   }
 }
