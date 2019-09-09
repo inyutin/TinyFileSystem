@@ -13,3 +13,7 @@
 
 #define MAX_LENGTH_FILE_NAME 10 /* The maximum length of file name */
 #define MAX_LENGTH_TEXT 100     /* The maximum amount of chars to write to file */
+
+#define SERVER "127.0.0.1"
+#define PORT 8080
+#define MAX_MESSAGE_LENGTH 100

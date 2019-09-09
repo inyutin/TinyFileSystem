@@ -14,10 +14,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/socket.h>
 
-void ls_t (int currentDirId) {
+void ls_t (int currentDirId, int sock) {
     struct Inode currentDir = getInode(currentDirId);
     int offset = DATA_OFFSET + currentDir.direct[0] * BLOCK_SIZE;
+    char *result = "";
     for (int i = 0; i < currentDir.numOfFiles; i++) {
         struct Mapping mapping;
         readFromFilesystem(offset + i*sizeof(struct Mapping),
@@ -25,16 +30,34 @@ void ls_t (int currentDirId) {
 
         struct Inode tmp = getInode(mapping.id);
         if (tmp.numOfFiles == 0) {
-            printf("\033[22;34m %s \033[0m", mapping.name);
+            char* left = " \033[22;34m ";
+            char* right = " \033[0m";
+            int len = strlen(result) + strlen(left) + strlen(mapping.name) + strlen(right) + 1;
+            char* new_result = malloc(len);
+            strcpy(new_result, result);
+            strcat(new_result, left);
+            strcat(new_result, mapping.name);
+            strcat(new_result, right);
+            result = new_result;
         } else {
-            printf("\033[22;34m %s/ \033[0m", mapping.name);
+            char* left = "\033[22;34m ";
+            char* right = "/ \033[0m";
+            int len = strlen(result) + strlen(left) + strlen(mapping.name) + strlen(right) + 1;
+            char* new_result = malloc(len);
+            strcpy(new_result, result);
+            strcat(new_result, left);
+            strcat(new_result, mapping.name);
+            strcat(new_result, right);
+            result = new_result;
         }
     }
+    send(sock, result, strlen(result), 0);
 }
 
-int cd_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
+int cd_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME], int sock) {
     if (strcmp(name, "/") == 0) {
-        printf("Current directory is root");
+        char* result = "Current directory is root";
+        send(sock, result, strlen(result), 0);
         return 0;
     }
 
@@ -44,19 +67,26 @@ int cd_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
 
     int temp = open_t(currentDirId, name);
     if (temp == -1) {
-        printf("Can't find path. Please try again.");
+        char* result = "Can't find path. Please try again.";
+        send(sock, result, strlen(result), 0);
         return currentDirId;
     } else {
         if (getInode(temp).numOfFiles == 0) {
-            printf("This is a file, not a directory. Current directory does not change. Try again please.");
+            char* result = "This is a file, not a directory. Current directory does not change. Try again please.";
+            send(sock, result, strlen(result), 0);
             return currentDirId;
         }
-        printf("Current directory is %s", name);
+        char* left = "Current directory is ";
+        int len = strlen(left) + strlen(name) + 1;
+        char *result = malloc(len);
+        strcpy(result, left);
+        strcat(result, name);
+        send(sock, result, len, 0);
         return temp;
     }
 }
 
-void mkdir_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
+void mkdir_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME], int sock) {
     //Check if there exist a file with the same name
     struct Inode currentDir = getInode(currentDirId);
     int offset = DATA_OFFSET + currentDir.direct[0] * BLOCK_SIZE;
@@ -66,7 +96,8 @@ void mkdir_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
                            (void*)& mapping, sizeof(struct Mapping));
 
         if(strcmp(name,mapping.name)==0) {
-            printf("A directory with the same name exists.");
+            char* result = "A directory with the same name exists.";
+            send(sock, result, strlen(result), 0);
             return;
         }
     }
@@ -94,9 +125,18 @@ void mkdir_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
     superblock.nextAvailableInode = nextAvailableInode + 1;
     superblock.nextAvailableBlock = nextAvailableBlock + 1;
     writeToFilesystem(SB_OFFSET, (void*)& superblock, sizeof(struct Superblock));
+
+    char* left = "Directory ";
+    char* right = " was created";
+    int len = strlen(left) + strlen(name) + strlen(right) + 1;
+    char *result = malloc(len);
+    strcpy(result, left);
+    strcat(result, mapping.name);
+    strcat(result, right);
+    send(sock, result, len, 0);
 }
 
-void touch_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
+void touch_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME], int sock) {
     //Check if there exist a file with the same name
     struct Inode currentDir = getInode(currentDirId);
     int offset = DATA_OFFSET + currentDir.direct[0] * BLOCK_SIZE;
@@ -106,7 +146,8 @@ void touch_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
                            (void*)& mapping, sizeof(struct Mapping));
 
         if(strcmp(name, mapping.name) == 0) {
-            printf("A file with the same name exists.");
+            char* result = "A file with the same name exists.";
+            send(sock, result, strlen(result), 0);
             return;
         }
     }
@@ -134,13 +175,22 @@ void touch_t(int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
     superblock.nextAvailableInode = nextAvailableInode + 1;
     superblock.nextAvailableBlock = nextAvailableBlock + 1;
     writeToFilesystem(SB_OFFSET, (void*)& superblock, sizeof(struct Superblock));
-    printf("File %s was created", name);
+
+    char* left = "File ";
+    char* right = " was created";
+    int len = strlen(left) + strlen(name) + strlen(right) + 1;
+    char *result = malloc(len);
+    strcpy(result, left);
+    strcat(result, mapping.name);
+    strcat(result, right);
+    send(sock, result, len, 0);
 }
 
-void cat_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
+void cat_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME], int sock) {
     int id = open_t (currentDirId, name);
     if (id == -1) {
-        printf("File not found. Try again please.");
+        char* result = "File not found. Try again please.";
+        send(sock, result, strlen(result), 0);
         return;
     }
     struct Inode inode = getInode(id);
@@ -148,22 +198,25 @@ void cat_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME]) {
     int code = read_t(inode.id, 0, buf, inode.size);
 
     if (code == -1) {
-        printf("File is directory or the file does not exist. Exit.");
+        char* result = "File is directory or the file does not exist. Exit.";
+        send(sock, result, strlen(result), 0);
         return;
     } else {
-        printf("%s", buf);
+        send(sock, buf, strlen(buf), 0);
         return;
     }
 }
 
-void echo_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME], char text[MAX_LENGTH_TEXT]) {
+void echo_t (int currentDirId, char name[MAX_LENGTH_FILE_NAME], char text[MAX_LENGTH_TEXT], int sock) {
     int num = open_t (currentDirId, name);
     struct Inode inode = getInode(num);
     if (num == -1) {
-        printf("File not found. Try again please.");
+        char* result = "File not found. Try again please.";
+        send(sock, result, strlen(result), 0);
         return;
     }
 
     write_t(num, inode.size, text, strlen(text));
-    printf("Write successful.");
+    char* result = "Write successful.";
+    send(sock, result, strlen(result), 0);
 }

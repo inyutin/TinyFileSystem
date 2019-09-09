@@ -1,6 +1,7 @@
 #include "define.h"
 
 #include "Filesystem/commands.h"
+#include "daemonize.c"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,7 +20,7 @@ void help() {
     printf("! help - show information about commands.");
 }
 
-int main() {
+int run_shell() {
     int currentDirId = 0; //root
 
     help();
@@ -141,4 +142,15 @@ int main() {
 
         printf("Unknown command %s", command);
   }
+}
+
+int main() {
+    skeleton_daemon();
+
+    while (1) {
+        syslog (LOG_NOTICE, "FS daemon started.");
+        int code = run_shell();
+        syslog (LOG_NOTICE, "FS daemon terminated with error %d", code)
+        return EXIT_SUCCESS;
+    }
 }
