@@ -18,10 +18,13 @@ int run_shell(char str[MAX_MESSAGE_LENGTH], int currentDirId, int sock) {
     if (str[0] == '\n') {
         command[0] = '\0';
     } else {
-        int len = strlen(str);
-        str[len-1] = '\0';
         char* token = strtok(str, " ");
         strcpy(command, token);
+    }
+
+    if (strcmp(command, "exit") == 0) {
+        close(sock);
+        return currentDirId;
     }
 
     if (strcmp(command, "ls") == 0) {
@@ -152,6 +155,8 @@ int main(int argc, char const *argv[]) {
     int address_len = sizeof(address);
     int currentDirId = 0; //root
 
+    daemon(1, 1);
+
     while (1) {
         int new_socket = accept(server_fd, (struct sockaddr*) &address, (socklen_t*) &address_len);
         if (new_socket < 0) {
@@ -162,8 +167,6 @@ int main(int argc, char const *argv[]) {
 
         char buffer[MAX_MESSAGE_LENGTH] = {0};
         int command = read(new_socket, buffer, 1024);
-        printf("Message received: %s", buffer);
-
         currentDirId = run_shell(buffer, currentDirId, new_socket);
         close(new_socket);
     }

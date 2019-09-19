@@ -16,7 +16,8 @@ void help() {
     printf("! touch [name] - create empty file with specified name in current directory.\n");
     printf("! cat [name] - read all from file specified.\n");
     printf("! echo [name] [text] - write [text] to the end of the file specified.\n");
-    printf("! help - show information about commands.");
+    printf("! help - show information about commands.\n");
+    printf("! exit - exit client.");
 }
 
 int main(int argc, char const *argv[]) {
@@ -53,7 +54,11 @@ int main(int argc, char const *argv[]) {
             return -1;
         }
 
+        int len = strlen(command);
+        command[len-1] = '\0';
+
         if(strcmp(command, "exit") == 0) {
+            send(sock, command, strlen(command), 0);
             printf("Shell exited.");
             close(sock);
             exit(0);
