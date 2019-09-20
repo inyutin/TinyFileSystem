@@ -118,7 +118,6 @@ int run_shell(char str[MAX_MESSAGE_LENGTH], int currentDirId, int sock) {
 }
 
 int main(int argc, char const *argv[]) {
-    // Creating socket file descriptor
     int server_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (server_fd == 0) {
         printf("error");
@@ -126,7 +125,6 @@ int main(int argc, char const *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    // Forcefully attaching socket to the port 8080
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt))) {
         printf("error");
@@ -139,7 +137,6 @@ int main(int argc, char const *argv[]) {
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );
 
-    // Forcefully attaching socket to the port 8080
     if (bind(server_fd, (struct sockaddr*) &address, sizeof(address)) < 0) {
         printf("error");
         perror("bind failed");
